@@ -1,0 +1,30 @@
+
+
+#
+plot(covid_agg$`cat country cases lat lon`)
+
+covid <- read.table("covid_agg.csv", head=T)
+plot(covid$country,covid$cases,las=1) # horizontal labels
+plot(covid$country,covid$cases,las=2)
+plot(covid$country,covid$cases,las=3) # verticale
+plot(covid$country,covid$cases,las=3, cex.axis=0.6)
+
+
+
+install.packages("ggplot2") 
+library(ggplot2)
+data(mpg)
+head(mpg)
+
+# (data, estetica(x,y))+geometria()
+ggplot(mpg,aes(x=displ,y=hwy))+ geom_point()
+ggplot(mpg,aes(x=displ,y=hwy))+ geom_line()
+ggplot(mpg,aes(x=displ,y=hwy))+ geom_polygon()
+
+ggplot(covid,aes(x=lon,y=lat,size=cases))+geom_point()
+# grafico con latitudine e longitudine e la dimensione rappresenta il numero di casi 
+
+install.packages("spatstat")
+library(spatstat)
+attach(covid)
+covid.ppp= ppp(covid$lon, covid$lat, c(-180,180), c(-90,90)))
