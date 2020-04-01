@@ -1,0 +1,23 @@
+
+
+setwd("C:/lab") # dico di sndare dentro al disco
+load("point_pattern.RData") # inerire l'RData nominato ieri
+library(spatstat)
+plot(d) # mappa densità
+cl <- colorRampPalette(c('yellow','orange','red'))(100) # colori 
+plot(d,col=cl)
+
+points(covids) # punti del corona
+
+install.packages("rgdal") # legge dati spazial
+library(rgdal)
+coastlines <- readOGR("ne_10m_coastline.shp")
+
+plot(coastlines, add=T) # mappa del mondo
+
+
+# esercizio nuovo colore
+cl2 <- colorRampPalette(c('violet','yellow','green'))(100)
+plot(d,col=cl2)
+plot(coastlines, add=T)
+points(covids)
