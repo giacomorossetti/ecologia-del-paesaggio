@@ -1,0 +1,92 @@
+
+
+
+
+
+#
+
+install.packages("raster")
+library(raster)
+setwd("C:/lab/") #carico i dati da una destinazione
+
+# importiamo un immagine satellitare all' interno di r
+p224r63_2011 <- brick("p224r63_2011_masked.grd") # importo immagine satellitare.
+
+
+
+
+plot(p224r63_2011) # mi fa le immagini con i vari sensori è un immagine del satellite landsat.
+
+## B1: blue
+# B2: green
+# B3: red
+# B4: near infrared (nir)
+# B5: medium infrared
+# B6: thermal infrared
+# B7: medium infrared
+
+cl <- colorRampPalette(c('black','grey','light grey'))(100) # creo colorpalet nuova
+
+plot(p224r63_2011, col=cl) #dico di attivare la color palet che ho fatto al nostro.
+
+cllow <- colorRampPalette(c('black','grey','light grey'))(5) 
+
+plot(p224r63_2011, col=cllow) # una nuova color palet con meno colori
+
+names(p224r63_2011) # vedo i nomi di tutti gli elementi
+
+
+clb <- colorRampPalette(c('dark blue','blue','light blue'))(100) # creo una colorazione in blu
+ #attach non dunzione can libreria raster
+
+
+plot(p224r63_2011$B1_sre, col=clb) #solo per la immagine col sensore del blu gli cambio il color.
+
+# bamultiplonda del vicino ir con colori sul rossiccio
+clirn <- colorRampPalette(c('red','orange','yellow'))(100)
+plot(p224r63_2011$B4_sre, col=clirn)
+# è molto giallo perchè la riflettanza nel irvicino è alta dovo c'è foresta
+
+
+
+# il multiplo grafico
+par(mfrow=c(2,2))
+# blue
+clb <- colorRampPalette(c('dark blue','blue','light blue'))(100) # 
+plot(p224r63_2011$B1_sre, col=clb)
+#verde
+clg <- colorRampPalette(c('dark green','green','light green'))(100)
+plot(p224r63_2011$B2_sre, col=clg)
+# rosso
+clr <- colorRampPalette(c('dark red','red','pink'))(100) # 
+plot(p224r63_2011$B3_sre, col=clr)
+#
+nir
+clirn <- colorRampPalette(c('red','orange','yellow'))(100)
+plot(p224r63_2011$B4_sre, col=clirn)
+
+dev.off() #pulisce i grafici
+# la funzione ha 3 bande RGB e usiamo le corrispondenti che vediamo così vediamo l' immagine come in realtà come occhio umano
+
+ #sterch serve per tirare i colori senò vengono scuri per la sovrapposizion.
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") # faccio una visuale fasulla facendo scalare di 1 (r=infrarosso,g=rosso,b=verde)
+# questa immagine si usa perchè vedendo nir. e le piante non lo assorbono, così l' immagine risulta rossa dove c'è una riflettanza forte nell' nir quindi dive ci sono le forest.
+#la componente R di questa immaginee (che ci appare rossa) non mostrerà la lunghezza d' onda rossa ma nir.
+# rosso alberi, azzurro campi. vedo i disboscamenti.
+
+
+#multiplot
+par(mfrow=c(1,2)) # 1,2 signific 2 colonne e una riga
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+
+
+
+dev.off()
+
+# mettimao l' infrarosso in altre componenti (nir è 4 in questo caso) lo posizioniamo sulla componente green
+plotRGB(p224r63_2011, r=3, g=4, b=1, stretch="Lin") # tutte le piante diventano verdi perchè il verde appare dove c'è nir che riflette molto 
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin") # mettendo nir sul blu. il blu appare dove c'è riflessione di nir, quindi sulla foresta
+
+
