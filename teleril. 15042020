@@ -1,0 +1,90 @@
+
+
+
+
+
+# 
+library(raster)
+setwd("C:/lab/")
+p224r63_2011 <- brick("p224r63_2011_masked.grd") # apro immagine satellite
+p224r63_1988 <- brick("p224r63_1988_masked.grd") # lavoriamo con la stessa immagine del precedente lavoro ma del 1988 invece che del 2011
+plot(p224r63_1988) 
+
+# plot con le varie colorazioni e le varie lunghezze d' onda
+par(mfrow=c(2,2)) # dico che sto per fare un multiplot 2.2
+
+clb <- colorRampPalette(c('dark blue','blue','light blue'))(100) # 
+plot(p224r63_1988$B1_sre, col=clb)
+#verde
+clg <- colorRampPalette(c('dark green','green','light green'))(100)
+plot(p224r63_1988$B2_sre, col=clg)
+# rosso
+clr <- colorRampPalette(c('dark red','red','pink'))(100) # 
+plot(p224r63_1988$B3_sre, col=clr)
+
+nir
+clirn <- colorRampPalette(c('red','orange','yellow'))(100)
+plot(p224r63_1988$B4_sre, col=clirn)
+
+# come vede il satellite land sat
+# B1: blue - 1
+# B2: green - 2
+# B3: red - 3
+# B4: near infrared (nir) - 4
+
+dev.off()
+plotRGB(p224r63_1988, r=3, g=2, b=1, stretch="Lin") # visione da uomo.
+plotRGB(p224r63_1988, r=4, g=2, b=1, stretch="Lin") # rosso dove riflette nir (quindi diventa tutto rosso dato che gli alberi riflettono molto nir)
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin") # visione che usiamo per piante
+
+
+# confronto immagini del 2011 e immagine del 1988 (con visuale r=4, g=3, b=2)
+dev.off
+par(mfrow=c(2,1))
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+
+dev.off()
+
+# dvi (nir-r) #la pianta sana riflette nir e assorbe rosso, quindi dobbiamo avere valore alto (es99-0)
+# lo facciamo per tutti i pixel nel 2011 e 88
+
+dvi1988 <- p224r63_1988$B4_sre - p224r63_1988$B3_sre
+plot(dvi1988)
+
+dvi2011 <- p224r63_2011$B4_sre - p224r63_2011$B3_sre
+plot(dvi2011)
+
+cldvi <- colorRampPalette(c('light blue',' green',' dark green'))(100) # 
+plot(dvi2011, col=cldvi) # gli do colori in cui valori bassi ( non piante sane) sono azzurri e alti verdi
+
+# 
+#
+#dvi tra 88 e moderno )la differenza tra il dvi 1988 2011
+difdvi <- dvi2011 - dvi1988
+plot(difdvi)
+
+cldifdvi <- colorRampPalette(c('red','white','blue'))(100) # 
+plot(difdvi, col=cldifdvi)
+ # valori bassi (rossi nella nuova color palet) dove stava bene e ora sta male
+#valori attorno a zer (bianchi nella nuova color rem) è rimasta uguale
+#valori alti(blu nella color) è migliorata
+
+
+# faccio un lavoro in cui vedo 1988 e 2011 con visione(r=4, g=3, b=2) e la differenza di dvi
+
+par(mfrow=c(3,1))
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+plot(difdvi, col=cldifdvi)
+
+# modifica del risoluzione
+dev.off()
+p224r63_2011lr <- aggregate(p224r63_2011, fact=10) # abbasso la risoluzione di 10 volte
+p224r63_2011lr50 <- aggregate(p224r63_2011, fact=50) # abbasso larisoluzione di 50
+
+# la foto del 2011 a varie risoluzioni
+par(mfrow=c(3,1))
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011lr, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011lr50, r=4, g=3, b=2, stretch="Lin")
