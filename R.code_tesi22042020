@@ -1,0 +1,11 @@
+setwd("C:/lab")
+load("Tesi.RData")
+head(Tesi)
+attach(Tesi)
+library(spatstat)
+# i punti variano da 12.42 a 12.46 (long) e 43.9 e 43.95
+dev.off()
+Tesippp <- ppp(Longitude, Latitude, c(12.41,12.47), c(43.9,43.95)) # gli dico che posto del "mondo" 
+dT <- density(Tesippp) # mappa di densità
+plot(dT) # faccio il grafico
+points(Tesippp, col="green") # 
