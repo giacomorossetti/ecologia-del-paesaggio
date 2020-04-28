@@ -1,0 +1,50 @@
+
+
+
+
+
+#
+setwd("C:/lab/")
+library(spatstat)
+load("sanmarino.RData")
+ls()
+dt
+Tesippp # i punti campionamentooo.
+
+#faccio il grafico della densità dei punti
+load("Tesi.RData")
+head(Tesi)
+attach(Tesi)
+library(spatstat)
+# i punti variano da 12.42 a 12.46 (long) e 43.9 e 43.95
+Tesippp <- ppp(Longitude, Latitude, c(12.41,12.47), c(43.9,43.95)) # gli dico che posto del "mondo" 
+dT <- density(Tesippp) # mappa di densità
+plot(dT) # faccio il grafico
+points(Tesippp, col="green")
+
+#
+marks(Tesippp) <- Tesi$Species_richness # associo a tesipp( il nostro point pattern) la richnes. a ogni punto associa un determinato valore, in questo richnes
+interpol <- Smooth(Tesippp) # mi calcola la richness dappertutto senza averla
+plot(interpol)
+points(Tesippp, col="green")
+
+
+library(rgdal)
+sanmarino <- readOGR("San_Marino.shp") 
+plot(sanmarino) # mappa di S.Marino
+plot(interpol, add=T) # sovrappongo la nostra mappa interpol della richnes. (add fa sovrapporre)
+
+par(mfrow=c(1,2)) # faccio un multiframe
+#grafico della density
+dT <- density(Tesippp) # mappa di densità
+plot(dT) # faccio il grafico
+points(Tesippp, col="green")
+# grafico dell' interpol
+plot(interpol)
+points(Tesippp, col="green") 
+
+par(mfrow=c(2,1)) #graficocon 
+plot(dT, main="Density of points")
+points(Tesippp,col="green")
+plot(interpol, main="Estimate of species richness")
+points(Tesippp,col="green")
