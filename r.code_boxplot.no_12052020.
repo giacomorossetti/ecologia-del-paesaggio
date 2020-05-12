@@ -1,0 +1,29 @@
+
+
+
+
+
+
+setwd("C:/lab/")
+setwd("C:/lab/esa_no2") # lavoriamo sempre con le emissioni di azoto
+rlist <- list.files(pattern=".png") #creo la lista
+library(raster)
+
+
+listafinale <- lapply(rlist, raster) # li carico
+EN <- stack(listafinale) # faccio lo stackkk
+difEN <- EN$EN_0013 - EN$EN_0001 #sottraggo la situazione 0001 da quella0013 sempre in europa
+cld <- colorRampPalette(c('blue','white','red'))(100) # 
+plot(difEN, col=cld) 
+
+
+cl <- colorRampPalette(c('red','orange','yellow'))(100) #
+plot(EN, col=cl)
+
+# facciamo boxplot
+
+boxplot(EN) 
+boxplot(EN, horizontal=T) # orizzontal
+boxplot(EN, horizontal=T,outline=F) #senza gli outlier
+
+# da gennaio a marzo (asseY) non c'è stato tanto modificazione nella medie, ma i valori massimi calano un pochino.
