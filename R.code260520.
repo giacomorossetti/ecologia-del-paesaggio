@@ -1,0 +1,72 @@
+
+
+
+
+
+
+setwd("C:/lab/")
+library(raster)
+# per caricare una foto usiamo la funzione RASTER per caricare tutte le immagini con i vari sensori usiamo brik invec.
+d1c <- raster("d1c.tif")
+d2c <- raster("d2c.tif")
+
+dev.off()
+par(mfrow=c(1,2))
+cl <- colorRampPalette(c('black','green'))(100) #
+plot(d1c,col=cl)
+plot(d2c,col=cl)
+#nell' immagine la foresta è la classe 2 quindi. black=campo, green=forest.
+,
+# voglio eliminare tutti i valorio che corrispondono a agricoltura
+#così estraiamo foresta
+d1c.for <- reclassify(d1c, cbind(1,NA))
+
+par(mfrow=c(1,2))
+cl <- colorRampPalette(c('black','green'))(100) #
+plot(d1c,col=cl)
+plot(d1c.for,col=cl)
+# nell' immagine 2 abbiamo reso nullo il valore numero1.
+
+d2c.for <- reclassify(d2c, cbind(1,NA))
+par(mfrow=c(1,2))
+
+plot(d2c.for)
+plot(d1c.for)
+
+
+#  creare delle petch.
+install.packages("igraph")
+library(igraph) # for pacthes
+d1c.for.pacthes <- clump(d1c.for)
+d2c.for.pacthes <- clump(d2c.for)
+
+par(mfrow=c(1,2))
+plot(d1c.for.pacthes)
+plot(d2c.for.pacthes)
+
+clp <- colorRampPalette(c('dark blue','blue','green','orange','yellow','red'))(100) # 
+par(mfrow=c(1,2))
+plot(d1c.for.pacthes, col=clp)
+plot(d2c.for.pacthes, col=clp)
+
+#salvo le foto (le mando nella cartella lab)
+writeRaster(d1c.for.pacthes, "d1c.for.patches.tif")
+writeRaster(d1c.for.pacthes, "d2c.for.patches.tif")
+
+
+
+
+
+
+# calcolo il numero delle petch che si sono generate
+
+d1c.for.pacthes
+time <- c("Before deforestation","After deforestation")
+npatches <- c(301,1212)
+
+
+
+output <- data.frame(time,npatches)
+attach(output)
+library(ggplot2)
+ggplot(output, aes(x=time, y=npatches, color="red")) + geom_bar(stat="identity", fill="white")
