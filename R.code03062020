@@ -1,0 +1,27 @@
+setwd("C:/lab/snow/")
+
+library(raster)
+
+# carico tutto insieme
+rlist <- list.files(pattern="snow") 
+list_rast <- lapply(rlist, raster)
+snow.multitemp <- stack(list_rast)
+plot(snow.multitemp)
+
+snow.multitemp
+
+clb <- colorRampPalette(c('dark blue','blue','light blue'))(100) # 
+plot(snow.multitemp,col=clb)
+plot(snow.multitemp$snow2010r, col=clb)
+
+#zummo su Italia
+extension <- c(6, 20, 35, 50)
+snow2010r.italy <- crop(snow.multitemp$snow2010r, extension)
+plot(snow2010r.italy, col=clb)
+#
+snow.multitemp.italy <- crop(snow.multitemp, extension)
+plot(snow.multitemp.italy, col=clb)
+# sistemo le legende
+plot(snow.multitemp.italy, col=clb, zlim=c(20,200))
+#
+boxplot(snow.multitemp.italy, horizontal=T,outline=F)
