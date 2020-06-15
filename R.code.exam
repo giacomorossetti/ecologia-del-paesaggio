@@ -1,0 +1,1041 @@
+
+
+
+
+
+
+# R codice esame.
+
+install.packages("sp") # installo una libreria.
+library(sp)
+# require(sp) è un altro comando per far partire l librerie
+
+data(meuse) # carico dataframe sistema
+meuse 
+
+head(meuse) # vedo le prime 6 righr del mio dataframe
+names(meuse) #vedo solo i nomi delle colonne 
+
+summary(meuse) # vedo tante informazioni tra cui qualche statistica
+
+pairs(meuse) # mi crea tutti i grafici con le combinazioni di tutte le variabili
+
+pairs(~ cadmium + copper + lead , data = meuse) #creo i grafici incrociati considerando solo alcune variabili , del data meuse
+
+# Exercie: cadmium copper lead zinc
+
+pairs(meuse[,3:6]) #grafici con le variabili dalla riga 3 alla 6
+
+pairs(meuse[,3:6], col="red") # cambio il colore
+
+pairs(meuse[,3:6], col="red", pch=19) #cambio il simbolo
+
+pairs(meuse[,3:6], col="red", pch=19, cex=3) # ora cambio la dimensione dei punti 
+
+pairs(meuse[,3:6], col="red", pch=19, cex=3, main="Primo pairs") #inserisco un titolo 
+
+# Exercise: do the same for the relationship between elevation and the elements
+
+pairs(meuse[,3:7], col="red", pch=19, cex=3, main="Primo pairs") # grafici incrociati tra variabili da riga 3 a 7  cambiando la forma del simbolo, gestendo dimensione del simbolo, aggiungendo un titolo
+
+--------
+# panels from outside
+
+# panel.correlations <- function(x, y, digits=1, prefix="", cex.cor)
+# {
+#     usr <- par("usr"); on.exit(par(usr))
+#     par(usr = c(0, 1, 0, 1))
+#     r1=cor(x,y,use="pairwise.complete.obs")
+#     r <- abs(cor(x, y,use="pairwise.complete.obs"))
+# 
+#     txt <- format(c(r1, 0.123456789), digits=digits)[1]
+#     txt <- paste(prefix, txt, sep="")
+#     if(missing(cex.cor)) cex <- 0.9/strwidth(txt)
+#     text(0.5, 0.5, txt, cex = cex * r)
+# }
+# 
+# panel.smoothing <- function (x, y, col = par("col"), bg = NA, pch = par("pch"),
+#     cex = 1, col.smooth = "red", span = 2/3, iter = 3, ...)
+# {
+#     points(x, y, pch = pch, col = col, bg = bg, cex = cex)
+#     ok <- is.finite(x) & is.finite(y)
+#     if (any(ok))
+#         lines(stats::lowess(x[ok], y[ok], f = span, iter = iter),
+#             col = 1, ...)
+# }
+# 
+# 
+# panel.histograms <- function(x, ...)
+# {
+#     usr <- par("usr"); on.exit(par(usr))
+#     par(usr = c(usr[1:2], 0, 1.5) )
+#     h <- hist(x, plot = FALSE)
+#     breaks <- h$breaks; nB <- length(breaks)
+#     y <- h$counts; y <- y/max(y)
+#     rect(breaks[-nB], 0, breaks[-1], y, col="white", ...)
+# }
+
+# pairs(meuse[,3:6], lower.panel = panel.correlations, upper.panel = panel.smoothing, diag.panel = panel.histograms)
+
+# EXERCISE: mettere come lower panel lo smoothing, come diagonal apnel gli istogrammi e come upper panel le correlazioni 
+
+# pairs(meuse[,3:6], lower.panel = panel.smoothing, upper.panel = panel.correlations, diag.panel = panel.histograms)
+
+
+################# funzione plot
+
+plot(meuse$cadmium,meuse$copper) #grafico tra cadmio e rame
+
+attach(meuse) # guarderà sempre nella tabella meuse…
+
+plot(cadmium,copper) # grafico senza dover mettere $ 
+
+plot(cadmium, copper, pch=17, col="green", main="primo plot") # gestisco forma, colori ,e titoli. 
+
+plot(cadmium, copper, pch=17, col="green", main="primo plot", xlab="cadmio", ylab="rame")  # nomino gli assi
+
+plot(cadmium, copper, pch=17, col="green", main="primo plot", xlab="cadmio", ylab="rame", cex.lab=2, cex=2) # gestisco colori, titoli, dimensioni, carattere e forma del punto.
+# pch(forma del punto) - col(colore) – main(titolo) – xlab,ylab(titoli di assi) – cex(domensione dei caratteri)
+
+
+
+# R spaziale: funzioni spaziali in Ecologia del paesaggio
+
+install.packages("sp")
+library(sp)
+# dati
+data(meuse) #dati di sistema
+meuse # 
+head(meuse) #visualizzo le prime 6 righe
+# plot cadmium e lead
+# alleghiamo il dataframe
+attach(meuse) #il software saprà di guardare sempre in questa tabella
+plot(cadmium,lead,col="red",pch=19,cex=2) # faccio un grafico tra cadmio e  piombo gestendo colori, dimensione del carattere e stile di punti.
+
+# exercise: plot di copper e zinc con simbolo trinagolo (17) e colore verde
+plot(copper,zinc,col="green",pch=17,cex=2) #colore verde, tipo di punto17 dimensione2
+
+# cambiare le etichette
+plot(copper,zinc,col="green",pch=17,cex=2,xlab="rame",ylab="zinco") # cambio le etichette 
+
+# multiframe o multipanel
+par(mfrow=c(1,2)) # multigrafici 1 riga 2 colonne
+plot(cadmium,lead,col="red",pch=19,cex=2) # dico quale mettere come primo grafico
+plot(copper,zinc,col="green",pch=17,cex=2) # ora dico quale mettere come secondo grafico
+
+
+# invertiamo i grafici riga/colonna in colonna/riga
+par(mfrow=c(2,1)) #  multiplot con 2 righe e 1 colonna
+plot(cadmium,lead,col="red",pch=19,cex=2)
+plot(copper,zinc,col="green",pch=17,cex=2)
+
+# multiframe automatico
+install.packages("GGally")
+library(GGally)
+ggpairs(meuse[,3:6])
+####################################################################################
+
+# usiamo il software per delle analisi spaziali
+install.packages("sp")
+library(sp)
+# dati da usare
+data(meuse)
+head(meuse)
+
+# coordinate del dataset
+coordinates(meuse)=~x+y # assegno ai punti del mio dataframe le coordinate.
+
+# spplot dei dati di zinco
+spplot(meuse,"zinc") # faccio il grafico con tutti i punti relativi a al campo zinco visualizzati nello spazio (ho una foto in cui vedo i vari punti e assegnati con dei colori differentio a seconda della quantità di questo metallo)
+
+# Exercise: spplot dei dati di rame
+head(meuse)
+# un'altra possibilità per vedere i nomi delle colonne è:
+names(meuse)
+spplot(meuse,"copper") # stessa cosa ma questa volta con rame
+
+# bubble
+bubble(meuse,"zinc") # mi fa un grafico in cui vedo la distribuzione spaziale dei punti con dimensioni diverse a seconda della concentrazione di questo metallo
+
+# Exercise: bubble del rame, colorato di rosso
+bubble(meuse,"copper",col="red") 
+##################################
+# foraminiferi (Sofia), carbon capture (Marco)
+# array
+foram <- c(10, 20, 35, 55, 67, 80)
+carbon <- c(5, 15, 30, 70, 85, 99)
+plot(foram, carbon, col="green", cex=2, pch=19) # grafico tra forma e carbon in cui scelgo colore, tipo di punto e dimensione.
+#######################################################################################à
+
+# Dati dall'esterno sul covid-19
+# setwd("C:/lab")  # ora caricherò dei dati presenti sulla cartella disco c personale
+# leggere la tabella
+covid <- read.table("covid_agg.csv",head=TRUE)
+
+####################
+# codice per analisi dei pattern legati ai punti
+
+install.packages("ggplot2")
+install.packages("spatstat")
+library(ggplot2) 
+library(spatstat)
+# setwd("C:/lab/") 
+
+# importare dati
+covid <- read.table("covid_agg.csv", head=T) # importo i dati con il loro nome che si trovano dentro disco c personale
+
+head(covid)
+plot(covid$country,covid$cases)  # faccio un grafico tra il campo country e case.
+# attach(covid) 
+# plot(country,cases) 
+# las=num. Gestisce la posizione delle etichette degli valori assi
+plot(covid$country,covid$cases,las=0) # parallel labels 
+plot(covid$country,covid$cases,las=1) # horizontal labels
+plot(covid$country,covid$cases,las=2) # perpendicular labels
+plot(covid$country,covid$cases,las=3) # vertical labels
+
+plot(covid$country,covid$cases,las=3,cex.lab=0.5, cex.axis=0.5) # vertical labels. Dimensione dei caratteri delle etichette e dei valori sugli assi
+
+# ggplot2
+data(mpg) # carico dati mpg
+head(mpg) 
+# tipo di geometria
+ggplot(mpg,aes(x=displ,y=hwy)) + geom_point()
+ggplot(mpg,aes(x=displ,y=hwy)) + geom_line()
+ggplot(mpg,aes(x=displ,y=hwy)) + geom_polygon()
+
+# ggplot di covid
+ggplot(covid,aes(x=lon,y=lat,size=cases)) + geom_point() # uso un grafico di questo tipo sul dataframe covid sugli assi x e y metto i valori di latitudine e longitudine, size( taglia dei punti lo lego al valore caes), in modo da avere un grafico con i punti nello spazio con dimensioni differenti a seconda del numero di casi.
+
+# density
+# create dataset for spatstat
+attach(covid)
+covids <- ppp(lon, lat, c(-180,180), c(-90,90))  # crea un oggetto per rappresentare i punti in un piano 2 dimensioni (lon e lat) tra i valori che ho indicato
+
+d <- density(covids) # densità
+
+plot(d) # visualizzo un grafico.
+points(covids) # aggiungo i punti
+
+# save the .RData
+
+setwd("~/lab")
+load("point_pattern.RData") # carico il lavoro completo di R che avevo completato
+
+ls() # visualizzo tutti i files salvati in questa sessione di R
+plot(d)
+cl <- colorRampPalette(c('yellow','orange','red')) (100) # creo una color palet che posso sfruttare
+plot(d, col=cl) # faccio il grafico della densità di punti del covid copn i colori della mia colrramppalett
+############################################à
+install.packages("rgdal") 
+library(rgdal)
+coastlines <- readOGR("ne_10m_coastline.shp") # carico le linee di costa, sono un file personale
+plot(coastlines, add=T) # le plotto e si metteranno  sovrapposte il grafico gia fatto in precedenza sul covid.
+
+# Exercise: plot della mappa di densità con una nuova colorazione, e aggiunta delle coastlines
+cl <- colorRampPalette(c('blue','light blue','light green','yellow')) (100)
+plot(d, col=cl)
+plot(coastlines, add=T, col="yellow")
+
+cl2 <- colorRampPalette(c('red','orange','yellow','green', 'blue')) (800)
+plot(d, col=cl2)
+plot(coastlines, add=T)
+
+cl3 <- colorRampPalette(c('green', 'violet', 'blue')) (200)
+plot(d, col=cl3)
+plot(coastlines, add=T)
+
+cl4 <- colorRampPalette(c('violet','yellow','green'))(100)
+plot(d, col=cl4)
+plot(coastlines, add=T)
+
+cl5 <- colorRampPalette(c('darkcyan', 'purple', 'red')) (200) 
+plot(d, col=cl5)
+plot(coastlines, add=T)
+
+cl6 <- colorRampPalette(c('darkcyan', 'purple', 'red')) (200) 
+plot(d, col=cl6)
+plot(coastlines, add=T)
+
+cl7<-colorRampPalette(c('white','blue','green','red','orange','yellow')) (150)
+plot(d, col=cl7)
+plot(coastlines, add=T)
+
+
+### Exercise: caricare il workspace point_pattern.RData (load("...")) e crare un garfico della mappa di densità
+
+library(spatstat)
+library(rgdal) # for the coastlines
+setwd("~/lab/")
+load("point_pattern.RData") # carico un rdata
+ls()
+cl5 <- colorRampPalette(c('cyan', 'purple', 'red')) (200)  
+plot(d, col=cl5, main="")
+points(covids)
+coastlines <- readOGR("ne_10m_coastline.shp") # carico le costlin
+plot(coastlines, add=T) # plotto le costline 
+
+
+####################################
+# interpolazione
+head(covid)
+marks(covids) <- covid$cases # associo come valore il valore di numero di casi
+s <- Smooth(covids) # mi calcola i valori interpolando anche dove non sono misurati 
+plot(s) # faccio il plottt
+
+# Exercise: plot(s) with points and coastlines
+cl5 <- colorRampPalette(c('cyan', 'purple', 'red')) (200) 
+plot(s, col=cl5, main="estimate of cases") # grafico con nuovo colore e titolo
+points(covids) # aggiungo i punto 
+coastlines <- readOGR("ne_10m_coastline.shp") # carico le costline
+plot(coastlines, add=T) # plotto le costline.
+
+text(covids)
+
+##### mappa finale
+par(mfrow=c(2,1)) # multigrafico 2 righe 1 colonna
+# densità
+cl5 <- colorRampPalette(c('cyan', 'purple', 'red')) (200) 
+plot(d, col=cl5, main="") # grafico della densità con titolo a piacere
+points(covids) # aggiungo i punti
+coastlines <- readOGR("ne_10m_coastline.shp") # corico le lieedicosta
+plot(coastlines, add=T) # plotto le costlines
+
+# interpolazione del numero di casi
+
+
+
+
+
+
+
+
+###### San Marino 
+# setwd("~/lab/") # guarda su lab
+# library(spatstat) 
+load("Tesi.RData") # carico R.datatesi
+ls() # visualizzo i file di questa sessione di R
+head(Tesi) # guardo solamente le prime 6 righe tesi
+attach(Tesi) # guarderà sempre ne ladaframe tesi
+
+summary(Tesi) # mi dice molte informazioni sul mio file tesi
+(guardo le coordinate)
+# x varia da 12.42 a 12.46
+# y varia da 43.91 a 43.94
+# point pattern: x,y,c(xmin,xmax),c(ymin,ymax)
+Tesippp <- ppp(Longitude, Latitude, c(12.41,12.47), c(43.9,43.95)) # crea un oggetto per rappresentare i punti in un piano 2 dimensioni (lon e lat) tra i valori che ho indicato
+dT <- density(Tesippp)  # creo un ” file” con la densità dei punti della tesi 
+plot(dT) # faccio un grafico
+points(Tesippp, col="green") # aggiungo i punti
+
+colors() # mi fa vedere la lista dei colori con i numeri in r associati
+
+######### 
+setwd("~/lab/")
+load("sanmarino.RData")
+library(spatstat)
+ls()
+# dT=density map, Tesi=dataset originale, Tesi_ppp=point pattern # questi sono i “files” che abbiamo fatto nell’ ultima lezione
+
+plot(dT)
+points(Tesippp, col="green")
+head(Tesi)
+marks(Tesippp) <- Tesi$Species_richness # # associo a tesipp( il nostro point pattern) la richnes. a ogni punto associa un determinato valore, la sua richness
+interpol <- Smooth(Tesippp) # calcola la richness anche dove non c’è
+plot(interpol) # faccio il grafico  in cui vedrò rappresentata la richness 
+points(Tesippp, col="green")
+
+library(rgdal) 
+sanmarino <- readOGR("San_Marino.shp") # fuzione per leggere i dato vettoriali 
+plot(sanmarino) # mi visualizza i confinidella mia mappa
+plot(interpol, add=T)
+points(Tesippp,col="green") # aggiungo i punti
+plot(sanmarino, add=T) # ho in primo piano la mappa di densità.
+
+# Exercise: plot multiframe di densità e interpolazione
+par(mfrow=c(2,1)) #multigrafico
+plot(dT, main="Density of points") # grafico di densità
+points(Tesippp,col="green") # metto punti green
+
+plot(interpol, main="Estimate of species richness") # mappa interpolata richness
+points(Tesippp,col="green") aggiungo i punti
+
+# Exercise: plot multiframe di densità e interpolazione uno acacnto all'alto
+par(mfrow=c(1,2)) #multiplot 
+
+plot(dT, main="Density of points")
+points(Tesippp,col="green")
+
+plot(interpol, main="Estimate of species richness")
+points(Tesippp,col="green")
+
+
+######################################################## 
+
+#
+
+install.packages("raster")
+library(raster)
+setwd("C:/lab/") #carico i dati da una destinazione
+# importiamo un immagine satellitare all' interno di r
+p224r63_2011 <- brick("p224r63_2011_masked.grd") # importo immagine satellitare.
+plot(p224r63_2011) # mi fa le immagini con i vari sensori è un immagine del satellite landsat.
+## B1: blue
+# B2: green
+# B3: red
+# B4: near infrared (nir)
+# B5: medium infrared
+# B6: thermal infrared
+# B7: medium infrared
+cl <- colorRampPalette(c('black','grey','light grey'))(100) # creo colorpalet nuova
+plot(p224r63_2011, col=cl) #dico di attivare la color palet che ho generato
+cllow <- colorRampPalette(c('black','grey','light grey'))(5) 
+plot(p224r63_2011, col=cllow) # una nuova color palet con meno colori
+names(p224r63_2011) # vedo i nomi di tutti gli elementi
+clb <- colorRampPalette(c('dark blue','blue','light blue'))(100) # creo una colorazione in blu
+ #attach non funzione can libreria raster
+plot(p224r63_2011$B1_sre, col=clb) #solo per la immagine col sensore del blu gli cambio il color.
+# multiplot  del vicino ir con colori sul rossiccio
+clirn <- colorRampPalette(c('red','orange','yellow'))(100)
+plot(p224r63_2011$B4_sre, col=clirn) 
+# è molto giallo perchè la riflettanza nel irvicino è alta dovo c'è foresta
+
+
+# multigrafico…
+# creo un grafico in cui faccio vedere tutte le immagini con i vari sensori e a ognuno di questi sensori associo il colore che lo caratterizza meglio per avere una visione intuitiva di quali sensori siano…
+par(mfrow=c(2,2)) # multigrafico con 2 righe e 2 colonne
+# blue
+clb <- colorRampPalette(c('dark blue','blue','light blue'))(100) # creo una colorazione blu
+plot(p224r63_2011$B1_sre, col=clb) 
+#verde
+clg <- colorRampPalette(c('dark green','green','light green'))(100)
+plot(p224r63_2011$B2_sre, col=clg)
+# rosso
+clr <- colorRampPalette(c('dark red','red','pink'))(100) # 
+plot(p224r63_2011$B3_sre, col=clr)
+nir
+clirn <- colorRampPalette(c('red','orange','yellow'))(100)
+plot(p224r63_2011$B4_sre, col=clirn)
+
+dev.off() #pulisce i grafici
+# la funzione ha 3 bande RGB e usiamo le corrispondenti che vediamo così vediamo l' immagine come in realtà come occhio umano  (3 era il rosso, 2 il verde e 1 blu).
+ #sterch serve per tirare i colori senò vengono scuri per la sovrapposizion.
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin")
+
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") scalo di 1 (r=infrarosso,g=rosso,b=verde)
+# questa immagine si usa perchè vedendo nir. e le piante non lo assorbono, così l' immagine risulta rossa dove c'è una riflettanza forte nell' nir quindi dive ci sono le forest.
+#la componente R di questa immaginee (che ci appare rossa) non mostrerà la lunghezza d' onda rossa ma nir.
+# rosso alberi, azzurro campi. vedo i disboscamenti.
+
+
+
+
+#multiplot
+par(mfrow=c(1,2)) #ha 1 riga e 2 colonne 
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+
+dev.off()
+# mettimao l' infrarosso in altre componenti (nir è 4 in questo caso) lo posizioniamo sulla componente green
+plotRGB(p224r63_2011, r=3, g=4, b=1, stretch="Lin") # tutte le piante diventano verdi perchè il verde appare dove c'è nir che riflette molto 
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin") # mettendo nir sul blu. il blu appare dove c'è riflessione di nir, quindi sulla foresta
+
+##############################################################################
+
+# salvataggio
+pdf("primografico.pdf") # png("primografico.png")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")  ") # rosso vedo infrarossi, di verde la riflessione del rosso e blu la riflessione del verde.
+dev.off() 
+
+# multiframe
+par(mfrow=c(2,1)) # multiplot
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin")  # visione occhio uman
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") # rosso vedo infrarossi, di verde la riflessione del rosso e blu la riflessione del verde.
+
+# nir nella compnente R(Red)
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+# Exercise: nir nella componente G(Green)
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin")
+# Exercise: nir nella componente B(Blue)
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin")
+################################################################################
+
+# 
+library(raster)
+setwd("C:/lab/")
+p224r63_2011 <- brick("p224r63_2011_masked.grd") # apro immagine satellite
+p224r63_1988 <- brick("p224r63_1988_masked.grd") # lavoriamo con la stessa immagine del precedente lavoro ma del 1988 invece che del 2011
+plot(p224r63_1988) 
+# plot con le varie colorazioni e le varie lunghezze d' onda
+par(mfrow=c(2,2)) # dico che sto per fare un multiplot 2.2   
+#assegno a ogni satellite la colorazione più intuitiva ( es immagine del  satellite che assorbe blu sarà blù, immagine del satellite che assorbe ir sarà arancione-rossa)
+clb <- colorRampPalette(c('dark blue','blue','light blue'))(100) # 
+plot(p224r63_1988$B1_sre, col=clb)
+#verde
+clg <- colorRampPalette(c('dark green','green','light green'))(100)
+plot(p224r63_1988$B2_sre, col=clg)
+# rosso
+clr <- colorRampPalette(c('dark red','red','pink'))(100) # 
+plot(p224r63_1988$B3_sre, col=clr)
+nir
+clirn <- colorRampPalette(c('red','orange','yellow'))(100)
+plot(p224r63_1988$B4_sre, col=clirn)
+
+# come vede il satellite land sat
+# B1: blue - 1
+# B2: green - 2
+# B3: red - 3
+# B4: near infrared (nir) - 4
+
+dev.off()
+plotRGB(p224r63_1988, r=3, g=2, b=1, stretch="Lin") # visione da uomo.
+plotRGB(p224r63_1988, r=4, g=2, b=1, stretch="Lin") # rosso dove riflette nir (quindi diventa tutto rosso dato che gli alberi riflettono molto nir)
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin") # visione che usiamo per piante
+
+
+# confronto immagini del 2011 e immagine del 1988 (con visuale r=4, g=3, b=2)
+dev.off
+par(mfrow=c(2,1))
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+
+dev.off()
+
+# dvi (nir-r) #la pianta sana riflette nir e assorbe rosso, quindi dobbiamo avere valore alto (es99-0)
+# lo facciamo per tutti i pixel nel 2011 e 88
+
+dvi1988 <- p224r63_1988$B4_sre - p224r63_1988$B3_sre
+plot(dvi1988)
+
+dvi2011 <- p224r63_2011$B4_sre - p224r63_2011$B3_sre
+plot(dvi2011)
+
+cldvi <- colorRampPalette(c('light blue',' green',' dark green'))(100) # 
+plot(dvi2011, col=cldvi) # gli do colori in cui valori bassi ( non piante sane) sono azzurri e alti verdi
+
+# 
+#
+#dvi tra 88 e 011 )la differenza tra il dvi 1988 e 2011
+difdvi <- dvi2011 - dvi1988
+plot(difdvi)
+
+cldifdvi <- colorRampPalette(c('red','white','blue'))(100) # 
+plot(difdvi, col=cldifdvi)
+ # valori bassi (rossi nella nuova color palet) dove stava bene e ora sta male
+#valori attorno a zer (bianchi nella nuova color rem) è rimasta uguale
+#valori alti(blu nella color) è migliorata
+
+
+# faccio un lavoro in cui vedo 1988 e 2011 con visione(r=4, g=3, b=2) e la differenza di dvi
+
+par(mfrow=c(3,1))
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+plot(difdvi, col=cldifdvi)
+
+# modifica del risoluzione
+dev.off()
+p224r63_2011lr <- aggregate(p224r63_2011, fact=10) # abbasso la risoluzione di 10 volte
+p224r63_2011lr50 <- aggregate(p224r63_2011, fact=50) # abbasso larisoluzione di 50
+
+# la foto del 2011 a varie risoluzioni
+par(mfrow=c(3,1))
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011lr, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011lr50, r=4, g=3, b=2, stretch="Lin")
+
+# dvi2011 low resolution
+dvi2011lr50 <- p224r63_2011lr50$B4_sre - p224r63_2011lr50$B3_sre
+plot(dvi2011lr50)
+
+# dvi1988 low resolution
+p224r63_1988lr50 <- aggregate(p224r63_1988, fact=50)
+dvi1988lr50 <- p224r63_1988lr50$B4_sre - p224r63_1988lr50$B3_sre
+
+# difdvi low resolution
+difdvilr50 <- dvi2011lr50 - dvi1988lr50
+cldifdvi <- colorRampPalette(c('red','white','blue'))(100) # 
+plot(difdvilr50, col=cldifdvi)
+
+# multiframe
+par(mfrow=c(2,1))
+plot(difdvi, col=cldifdvi)
+plot(difdvilr50, col=cldifdvi)
+
+
+
+
+#########################################################################
+
+# 21.04.2020
+setwd("C:/lab")
+library("raster")
+p224r63_2011 <- brick("p224r63_2011_masked.grd") # 
+install.packages("RStoolbox")
+library(RStoolbox)
+
+# le bande landsat (1:b 2:g 3:r 3:nir)
+
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+p224r63_2011c <- unsuperClass(p224r63_2011, nClasses=4) # divide l' immagine in 4 classi 
+plot(p224r63_2011c$map)
+clclass1 <- colorRampPalette(c('red', 'green', 'blue', 'black'))(100) 
+clclass2 <- colorRampPalette(c('red', 'blue', 'green', 'black'))(100)
+clclass <- colorRampPalette(c('green', 'red', 'blue', 'black'))(100) 
+plot(p224r63_2011c$map, col=clclass)
+p224r63_2011c <- unsuperClass(p224r63_2011, nClasses=2)
+plot(p224r63_2011c$map) # con meno classi 
+# incertezza se ci sono molte classi.
+####################################################################### 
+22.04.2020
+setwd("C:/lab")
+load("Tesi.RData")
+head(Tesi)
+attach(Tesi)
+library(spatstat)
+# i punti variano da 12.42 a 12.46 (long) e 43.9 e 43.95
+dev.off()
+Tesippp <- ppp(Longitude, Latitude, c(12.41,12.47), c(43.9,43.95)) # gli dico che posto del "mondo" 
+dT <- density(Tesippp) # mappa di densità
+plot(dT) # faccio il grafico
+points(Tesippp, col="green") # aggiungo anche punti
+################################################################################
+
+# interpolazione
+
+library(spatstat)
+library(ggplot2)
+library(sp)
+library(rgdal) 
+
+marks(covids) <- covid$cases # marks del pointpattern che avevamo creato e si chiamava covids, e associamo solo la riga casi di covid
+
+s <- Smooth(covids) # faccio interpolazione di casi (calcolo in ogni punto della foto il numero di casi)
+
+plot(s) # visualizzo il plot
+cl <- colorRampPalette(c('yellow','green','violet'))(100) # colori
+
+plot(s, main="Estimated number of cases",col=cl) # aggiungo un titolooo.
+points(covids,col="red") # aggiungo i punti
+plot(coastlines, col="black", add=T) # aggiungo le costline
+
+#multiframe densità dei punti, e numero di casi (stimati con interpolazione)
+
+par(mfrow=c(1,2))
+
+# densità
+cl5 <- colorRampPalette(c('cyan', 'purple', 'red')) (200) 
+plot(d, col=cl5, main="density")
+points(covids)
+coastlines <- readOGR("ne_10m_coastline.shp")
+plot(coastlines, add=T)
+
+# interpolazione del numero di casi
+cl5 <- colorRampPalette(c('cyan', 'purple', 'red')) (200) 
+plot(s, col=cl5, main="estimate of cases")
+points(covids)
+coastlines <- readOGR("ne_10m_coastline.shp")
+plot(coastlines, add=T)
+
+
+###################################################################### 
+
+#-28.04.20
+setwd("C:/lab/")
+library(spatstat)
+load("sanmarino.RData")
+ls()
+
+
+dt
+Tesippp # i punti campionamentooo.
+
+#faccio il grafico della densità dei punti
+load("Tesi.RData")
+head(Tesi)
+attach(Tesi)
+library(spatstat)
+# i punti variano da 12.42 a 12.46 (long) e 43.9 e 43.95
+Tesippp <- ppp(Longitude, Latitude, c(12.41,12.47), c(43.9,43.95)) # gli dico che posto del "mondo" 
+dT <- density(Tesippp) # mappa di densità
+plot(dT) # faccio il grafico
+points(Tesippp, col="green") # aggiungo i punti.
+
+marks(Tesippp) <- Tesi$Species_richness # associo a tesipp( il nostro point pattern) la richnes. a ogni punto associa un determinato valore, in questo richnes
+interpol <- Smooth(Tesippp) # mi calcola la richness dappertutto senza averla
+plot(interpol) # faccio il plot
+points(Tesippp, col="green") # cambio il colore
+
+library(rgdal) 
+sanmarino <- readOGR("San_Marino.shp")  #  leggo dati vettoriali
+plot(sanmarino) # mappa di S.Marino
+plot(interpol, add=T) # sovrappongo la nostra mappa interpol della richnes. (add fa sovrapporre)
+
+par(mfrow=c(1,2)) # faccio un multiframe
+#grafico della density
+dT <- density(Tesippp) # mappa di densità
+plot(dT) # faccio il grafico
+points(Tesippp, col="green")
+
+# grafico dell' interpol
+plot(interpol)
+points(Tesippp, col="green") 
+
+par(mfrow=c(2,1)) # multiplot con densità e richness)
+plot(dT, main="Density of points")
+points(Tesippp,col="green")
+plot(interpol, main="Estimate of species richness")
+points(Tesippp,col="green")
+############################################################################
+# Landcover 29.04.2020
+# R code land cover
+# install.packages(c("RStoolbox","raster"))
+library(raster)
+install.packages("RStoolbox")
+library(RStoolbox)
+setwd("C:/lab") 
+p224r63_2011 <- brick("p224r63_2011_masked.grd") # carico immagine satellitare
+# landsat bands: 1b, 2g, 3r, 4nir
+# rgb 
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") # visione rosso=infrarosso verde=rosso blu=verde)
+p224r63_2011c <- unsuperClass(p224r63_2011, nClasses=4) # divido in 4 classi
+p224r63_2011c
+plot(p224r63_2011c$map) faccio il grafico
+clclass <- colorRampPalette(c('red', 'green', 'blue', 'black'))(100) 
+plot(p224r63_2011c$map, col=clclass) # do nuova colore
+# in funzione del numero di classi aumenta l'incertezza dell'algoritmo automatico di classificazione
+# riportando potenzialmente classi leggermente differenti
+
+p224r63_2011c <- unsuperClass(p224r63_2011, nClasses=4)
+plot(p224r63_2011c$map)
+
+p224r63_2011c <- unsuperClass(p224r63_2011, nClasses=2) # uso 2 classi
+plot(p224r63_2011c$map)
+
+############################################################################### 
+#05.05.2020 land cover 
+setwd("C:/lab/")
+load("defor.RData")
+ls()
+library(raster)
+par(mfrow=c(1,2))
+cl <- colorRampPalette(c('black','green'))(100) # 
+plot(d1c$map, col=cl)
+plot(d2c$map, col=cl)
+cover <- c("Agriculture","Forest")
+before <- c(10.9,89.1)
+after <- c(48.2,51.8)
+output <- data.frame(cover,before,after)
+
+library(ggplot2)
+grafico1=ggplot(output, aes(x=cover, y=before, color=cover)) +       
+  geom_bar(stat="identity", fill="white")  # grafico confronto tra foresta e campi (prima di deforestazione) 
+
+grafico2=ggplot(output, aes(x=cover, y=after, color=cover)) +
+  geom_bar(stat="identity", fill="white")      # grafico confronto tra foresta e campi (dopo di deforestazione)
+
+
+install.packages("gridExtra") # per fare un grafico dato che par con ggplo non funzione
+library(gridExtra) 
+grid.arrange(grafico1,grafico2,nrow=1) # grafico tutto assieme.
+grid.arrange(grafico1,grafico2,ncol=1)
+
+
+########################################################################## 
+#05.05.2020 - 06.05.2020  analisi sugli ossidi di azoto in europa durante il blocco per epidemia covid19
+library(raster)
+setwd("C:/lab/")
+EN01 <- raster("EN_0001.png")
+plot(EN01) # impotro una immagine
+dev.off()
+#le immagini sono in ordine temporale (dall' inizio della pandemia fino a marzo)
+# immagini in cui viene indicato ossidi di N (proporzionali a inquinamento)
+# carico tutte fot
+EN01 <- raster("EN_0001.png")
+EN02 <- raster("EN_0002.png")
+EN03 <- raster("EN_0003.png")
+EN04 <- raster("EN_0004.png")
+EN05 <- raster("EN_0005.png")
+EN06 <- raster("EN_0006.png")
+EN07 <- raster("EN_0007.png")
+EN08 <- raster("EN_0008.png")
+EN09 <- raster("EN_0009.png")
+EN10 <- raster("EN_0010.png")
+EN11 <- raster("EN_0011.png")
+EN12 <- raster("EN_0012.png")
+EN13 <- raster("EN_0013.png")
+
+cl <- colorRampPalette(c('red','orange','yellow'))(100) #
+plot(EN01, col=cl) 
+plot(EN13, col=cl)
+par(mfrow=c(1,2)) # multiplot con ossidi di azoto inizio e fine blocco
+plot(EN01, col=cl)
+plot(EN13, col=cl)
+
+dev.off()
+
+difno2 <- EN13 - EN01 # differenza tra inizio e fine (febbraio e marzo)
+cldif <- colorRampPalette(c('blue','black','yellow'))(100) #
+plot(difno2, col=cldif) # visualizzo dove la differenza di ossidi è alta tra fine e inizio
+# specialmente in lombardia l' inquinamento è calato molto.
+
+# plottutti insieme (metodo lungooo)
+par(mfrow=c(4,4))
+plot(EN01, col=cl)
+plot(EN02, col=cl)
+plot(EN03, col=cl)
+plot(EN04, col=cl)
+plot(EN05, col=cl)
+plot(EN06, col=cl)
+plot(EN07, col=cl)
+plot(EN08, col=cl)
+plot(EN09, col=cl)
+plot(EN10, col=cl)
+plot(EN11, col=cl)
+plot(EN12, col=cl)
+plot(EN13, col=cl)
+
+plot ( EN1, EN2, EN3, EN4, EN5, EN6, EN7, EN8, EN9, EN10, EN11, EN12, col=cl)
+
+
+# faccio il grafico con tutto isieme e le carico tutte assieme.
+
+#creo una cartellina con dentro le 13 immagini
+load("EN.RData")
+setwd("C:/lab/esa_no2")
+rlist <- list.files(pattern=".png") # creo una lista
+listafinale <- lapply(rlist, raster) #li carichiamo
+EN <- stack(listafinale) # faccio uno stack
+cl <- colorRampPalette(c('red','orange','yellow'))(100) # faccio il grafico
+plot(EN, col=cl)
+
+# (mettere la ylim grafico, ci fa vedere il grafico tutto intero)
+library(ggplot2)
+cover <- c("Agriculture","Forest")
+before <- c(10.9,89.1)
+after <- c(48.2,51.8)
+
+output <- data.frame(cover,before,after)
+output
+
+library(gridExtra) # oppure: require(Extra)
+
+grafico1 <- ggplot(output, aes(x=cover, y=before, color=cover)) + 
+  geom_bar(stat="identity", fill="white") +
+  ylim(0, 100)
+
+grafico2 <- ggplot(output, aes(x=cover, y=after, color=cover)) + 
+  geom_bar(stat="identity", fill="white") +
+  ylim(0, 100)
+
+grid.arrange(grafico1, grafico2, nrow = 1)
+
+
+##################################################################################### 
+
+
+
+
+
+# analisi ossidi di azoto pandemia in europa 12.05.2020
+setwd("C:/lab/")
+setwd("C:/lab/esa_no2") # lavoriamo sempre con le emissioni di azoto
+rlist <- list.files(pattern=".png") #creo la lista
+library(raster)
+
+listafinale <- lapply(rlist, raster) # li carico
+EN <- stack(listafinale) # faccio lo stackkk
+difEN <- EN$EN_0013 - EN$EN_0001 #sottraggo la situazione 0001 da quella0013 sempre in europa
+cld <- colorRampPalette(c('blue','white','red'))(100) 
+plot(difEN, col=cld)  # faccio un grafico
+
+cl <- colorRampPalette(c('red','orange','yellow'))(100) #
+plot(EN, col=cl) # plotdi tutte le immagini 
+
+# facciamo boxplot
+boxplot(EN) 
+boxplot(EN, horizontal=T) # orizzontal
+boxplot(EN, horizontal=T,outline=F) #senza gli outlier
+# da gennaio a marzo (asseY) non c'è stato tanto modificazione nella medie, ma i valori massimi calano un pochino.
+##############################################################################
+
+
+
+
+
+
+
+
+
+
+# copertura di ghiacci 20.05.20……
+setwd("C:/lab/")
+install.packages("ncdf4")
+library(ncdf4)
+library(raster)
+snowmay <- raster("c_gls_SCE500_202005180000_CEURO_MODIS_V1.0.1.nc")
+cl <- colorRampPalette(c('darkblue','blue','light blue'))(100)
+plot(snowmay,col=cl) # copertura nevosa.
+dev.off()
+#carico tutti i dati in una cartella (tutti nella cartella snowversione tif)
+setwd("C:/lab/snow")
+#carico tutto insieme immagini da 200a2020
+rlist <- list.files(pattern=".tif")
+list_rast <- lapply(rlist, raster)
+snow.multitemp <- stack(list_rast) # faccio lo stak.
+plot(snow.multitemp,col=cl) # faccio il grafico
+
+#faccio un par con 2 immagini.
+par(mfrow=c(1,2))
+plot(snow.multitemp$snow2000r, col=cl, zlim=c(0,250)) # neve nel 2000
+plot(snow.multitemp$snow2020r, col=cl, zlim=c(0,250)) # neve nel 2020
+# differeza 2020-200
+difsnow = snow.multitemp$snow2020r - snow.multitemp$snow2000r
+cldiff <- colorRampPalette(c('blue','white','red'))(100) 
+plot(difsnow, col=cldiff) # grafico di differenza
+
+# file scaricato sulla previsione del 2025
+predicted.snow.2025.norm <- raster("predicted.snow.2025.norm.tif") # carico file previsione
+plot(predicted.snow.2025.norm) # plotto il file
+
+
+############################################################################ 
+#-26.05.2020 
+setwd("C:/lab/")
+library(raster)
+# per caricare una foto usiamo la funzione RASTER per caricare tutte le immagini con i vari sensori usiamo brik invec.
+d1c <- raster("d1c.tif")
+d2c <- raster("d2c.tif")
+
+dev.off()
+par(mfrow=c(1,2))
+cl <- colorRampPalette(c('black','green'))(100) 
+plot(d1c,col=cl)
+plot(d2c,col=cl)
+#nell' immagine la foresta è la classe 2 quindi. black=campo, green=forest.
+# voglio eliminare tutti i valorio che corrispondono a agricoltura
+#così da estrarre solamente la foresta
+d1c.for <- reclassify(d1c, cbind(1,NA))
+
+par(mfrow=c(1,2))
+cl <- colorRampPalette(c('black','green'))(100) #
+plot(d1c,col=cl)
+plot(d1c.for,col=cl)
+# nell' immagine 2 abbiamo reso nullo il valore numero1.
+
+d2c.for <- reclassify(d2c, cbind(1,NA)) # elimino classe foresta
+par(mfrow=c(1,2)) # 
+plot(d2c.for) # solo l’ agricoltura
+plot(d1c.for) # solo la foresta 
+
+
+
+
+#  creare delle petch.
+install.packages("igraph")
+library(igraph) # for pacthes
+d1c.for.pacthes <- clump(d1c.for) # creo le petch
+d2c.for.pacthes <- clump(d2c.for) # creo le petch
+
+par(mfrow=c(1,2))
+plot(d1c.for.pacthes)
+plot(d2c.for.pacthes)
+
+clp <- colorRampPalette(c('dark blue','blue','green','orange','yellow','red'))(100) # 
+par(mfrow=c(1,2))
+plot(d1c.for.pacthes, col=clp)
+plot(d2c.for.pacthes, col=clp)
+
+#salvo le foto (le mando nella cartella lab)
+writeRaster(d1c.for.pacthes, "d1c.for.patches.tif")
+writeRaster(d1c.for.pacthes, "d2c.for.patches.tif")
+
+# calcolo il numero delle petch che si sono generate
+d2c.for.pacthes # guardo il numero di petches che è scritto nell’ ultimo valore dei dati di questo elemento  
+d1c.for.pacthes # guardo quante petches
+time <- c("Before deforestation","After deforestation") # dico come sarà gestita l’ asse x con il tempo 
+npatches <- c(301,1212) # dico come sarà gestita l’ asse y cpn il numero di petches
+output <- data.frame(time,npatches)
+attach(output)
+library(ggplot2)
+ggplot(output, aes(x=time, y=npatches, color="red")) + geom_bar(stat="identity", fill="white") # faccio un grafico che mi indica quante petches c’ erano prima della deforestazione e viceversa. ( con la deforestazione la frammentazione aumenta notevolmente)
+
+################################################################################# 
+# 03.06.2020 snowcover
+setwd("C:/lab/snow/")
+
+library(raster)
+
+# carico tutto insieme
+rlist <- list.files(pattern="snow") 
+list_rast <- lapply(rlist, raster)
+snow.multitemp <- stack(list_rast)
+plot(snow.multitemp)
+
+snow.multitemp
+
+clb <- colorRampPalette(c('dark blue','blue','light blue'))(100) # 
+plot(snow.multitemp,col=clb)
+plot(snow.multitemp$snow2010r, col=clb)
+
+#zummo su Italia
+extension <- c(6, 20, 35, 50)
+snow2010r.italy <- crop(snow.multitemp$snow2010r, extension)
+plot(snow2010r.italy, col=clb)
+#
+snow.multitemp.italy <- crop(snow.multitemp, extension)
+plot(snow.multitemp.italy, col=clb)
+# sistemo le legende
+plot(snow.multitemp.italy, col=clb, zlim=c(20,200))
+#
+boxplot(snow.multitemp.italy, horizontal=T,outline=F)
+
+############################################################################## 
+
+
+# stimare presenza specie 08.06.2020
+
+install.packages("sdm")
+library(sdm)
+library(raster)
+library(rgdal)
+
+file <- system.file("external/species.shp", package="sdm") # file di sistema
+species <- shapefile(file)
+species
+# punti con presenza e assenza di una specie
+plot(species) # vedo solo punti ma non se c'è la specie
+
+plot(species[species$Occurrence == 1,],col='blue',pch=16) # faccio vedere punti con specie presente (valore1)
+points(species[species$Occurrence == 0,],col='red',pch=16) # faccio vedere i punti in cui è assente
+
+path <- system.file("external", package="sdm") 
+lst <- list.files(path=path,pattern='asc$',full.names = T) #
+#facciamo lo stack della lista e abbiamo i predittori (variabili usate per predire la presenza di una specie)
+
+preds <- stack(lst)
+cl <- colorRampPalette(c('blue','orange','red','yellow')) (100)
+plot(preds, col=cl)
+cl <- colorRampPalette(c('blue','orange','red','yellow')) (100)
+plot(preds, col=cl) # plot dei predittor
+#indago ogni variabile
+dev.off()
+points(species[species$Occurrence == 1,], pch=16)
+plot(preds$elevation, col=cl) #adora la pianura
+
+plot(preds$temperature, col=cl)
+points(species[species$Occurrence == 1,], pch=16) # sta al caldo
+
+plot(preds$precipitation, col=cl)
+points(species[species$Occurrence == 1,], pch=16) # ama acqua intermedia
+
+plot(preds$vegetation, col=cl)
+points(species[species$Occurrence == 1,], pch=16) # ama i foresta
+
+d <- sdmData(train=species, predictors=preds)
+d # vedo i miei dati
+
+m1 <- sdm(Occurrence ~ elevation + precipitation + temperature + vegetation, data=d, methods='glm') # modello di regressione lineare con un metodo glm
+p1 <- predict(m1, newdata=preds) #?
+plot(p1, col=cl) #possibilità di presenza
+points(species[species$Occurrence == 1,], pch=16)
