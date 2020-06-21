@@ -1,0 +1,233 @@
+
+
+
+
+
+# differenza della copertura vegetale tra maggio 1999 e maggio 2020
+setwd("C:/lab/1") #
+setwd("C:/lab")
+library(raster) #carico la libreria raster
+install.packages("rgdal")
+library(rgdal)
+dev.off() # codice che pulisce la lavagna del grafico
+#####################################################
+#Italia1999
+imm1999<- brick("c_gls_FCOVER_199905240000_GLOBE_VGT_V1.4.1.nc")  # carico con la funzione brick un' immagine raster che rappresenta la copertura vegetale a scala mondiale nel maggio 1999
+plot(imm1999,main= "coperura vegetale 05.1999") # visualizzo l' immagine dandole un titolo
+extension <- c(6, 20, 35, 48) # imposto l' estensione per visualizzare solo il territorio italiano
+ita1999<- crop(imm1999, extension) # imposto questa estensione per la mia immagine
+plot(ita1999,main="copertura vegetale Ita 05.1999") # visualizzo l' immagine estesa alla sola area italiana.
+#i confini italiani
+confini.ita=readOGR("ITA_adm0.shp")# carico i confini
+plot(confini.ita,add=T)#plotto i confini
+#Italia 2020
+imm2020<- brick("c_gls_FCOVER_202005240000_GLOBE_PROBAV_V1.5.1.nc") ## carico con la funzione brick un' immagine raster che rappresenta la copertura vegetale a scala mondiale nel maggio 2020
+plot(imm2020,main= "coperura vegetale 05.2020")# visualizzo quell' immagine dandole un titolo
+extension <- c(6, 20, 35, 48)#imposto l' estensione per visualizzare solo il territorio italiano
+ita2020<- crop(imm2020, extension)# # imposto questa estensione per la mia immagine
+plot(ita2020,main="copertura vegetale Ita 05.2020") # visualizzo l' immagine per la sola area italiana
+plot(confini.ita,add=T)#carico i confini
+#differenza Italia
+cl <- colorRampPalette(c('red','yellow','dark green'))(100) # creo una colorazione
+differenza.ita=ita2020-ita1999 # faccio la differeza tra i valori nell' immagine del 1999 e del 2020. In questo modo ottengo numeri negativi dove la copertura vegetale è diminuita e viceversa, e valori nulli dove non è cambiata...
+plot(differenza.ita, col=cl,main= "riforestazione 1999-2020") # faccio il grafico della differeza con la colorazione desiderata, avrò colori dal giallo al rosso ove la copertura è calata colori dal giallo al verde ove la copertura è aumentata.
+plot(confini.ita,add=T)#carico i confini
+
+########################################################
+#Bosnia1999
+imm1999<- brick("c_gls_FCOVER_199905240000_GLOBE_VGT_V1.4.1.nc")  # carico con la funzione brick un' immagine raster che rappresenta la copertura vegetale a scala mondiale nel maggio 1999
+plot(imm1999,main= "coperura vegetale 05.1999") # visualizzo l' immagine dandole un titolo
+imm1999
+extension.bosnia <- c(15.5,20 , 42.5, 45.3) # imposto l' estensione per visualizzare solo il territorio della Bosnia erzegovina
+bosnia.1999<- crop(imm1999, extension.bosnia) # imposto questa estensione per la mia immagine
+plot(bosnia.1999,main="copertura vegetale Bosnia 05.1999") # visualizzo l' immagine estesa alla sola area di Bosnia erzegovina.
+#confini de Bosnia
+confine.bosnia=readOGR("BIH_adm0.shp")
+plot(confine.bosnia,add=T)
+#Bosnia 2020
+imm2020<- brick("c_gls_FCOVER_202005240000_GLOBE_PROBAV_V1.5.1.nc") ## carico con la funzione brick un' immagine raster che rappresenta la copertura vegetale a scala mondiale nel maggio 2020
+plot(imm2020,main= "coperura vegetale 05.2020")# visualizzo quell' immagine dandole un titolo
+extension.bosia <- c(15.5,20 , 42.5, 45.3)#imposto l' estensione per visualizzare solo il territorio bosniaco
+bosnia2020<- crop(imm2020, extension.bosnia)# # imposto questa estensione per la mia immagine
+plot(bosnia2020,main="copertura vegetale Bosnia 05.2020") # visualizzo l' immagine per la sola area della Bosnie erzegovina
+plot(confine.bosnia,add=T)# aggiungo confini bosnia
+#diffreza.bosnia
+cl <- colorRampPalette(c('red',"yellow","dark green"))(100) # creo una colorazione
+differenza.bosnia=bosnia2020-bosnia.1999 # faccio la differeza tra i valori nell' immagine del 1999 e del 2020. In questo modo ottengo numeri negativi dove la copertura vegetale è diminuita e viceversa, e valori nulli dove non è cambiata...
+plot(differenza.bosnia, col=cl,main= "riforestazione 1999-2020") # faccio il grafico della differeza con la colorazione desiderata, avrò colori dal giallo al rosso ove la copertura è calata colori dal giallo al verde ove la copertura è aumentata.
+plot(confine.bosnia,add=T)# aggiungo confini bosnia
+########################################################
+
+#####################################
+
+# seleziono solo i territori all' interno dei confini statali
+
+install.packages("maptools")
+library(maptools)
+library(spatstat)
+
+proj4string(confini.ita) <- CRS(as.character(NA)) # elimino i NA
+confini.ita.owin <-as.owin(confini.ita) # trasformo file owin
+class(ita1999) # controllo quante bande ha
+ita1999.im<- as.im(ita1999[[1]]) # trasformo in un file im e considero solo la prima banda  
+Window(ita1999.im)<-confini.ita.owin # visualizzo solo le cose dentro a confine italia
+plot(ita1999.im,main="Fcover 1999",col=cl)
+plot(confini.ita,add=T)
+#######################
+proj4string(confini.ita) <- CRS(as.character(NA)) # elimino i NA
+confini.ita.owin <-as.owin(confini.ita) # trasformo file owin
+class(ita1999) # controllo quante bande ha
+ita2020.im<- as.im(ita2020[[1]]) # trasformo in un file im e considero solo la prima banda  
+Window(ita2020.im)<-confini.ita.owin # visualizzo solo le cose dentro a confine italia
+plot(ita2020.im,main="Fcover 2020",col=cl)
+plot(confini.ita,add=T)
+#################
+proj4string(confine.bosnia) <- CRS(as.character(NA)) # elimino i NA
+confine.bosnia.owin <-as.owin(confine.bosnia) # trasformo file owin
+class(bosnia.1999) # controllo quante bande ha
+bosnia.1999.im<- as.im(bosnia.1999[[1]]) # trasformo in un file im e considero solo la prima banda  
+Window(bosnia.1999.im)<-confine.bosnia.owin # visualizzo solo le cose dentro a confine italia
+plot(bosnia.1999.im,main="Fcover 1999",col=cl)
+plot(confine.bosnia,add=T)
+################
+proj4string(confine.bosnia) <- CRS(as.character(NA)) # elimino i NA
+confine.bosnia.owin <-as.owin(confine.bosnia) # trasformo file owin
+class(bosnia.2020) # controllo quante bande ha
+bosnia2020.im<- as.im(bosnia2020[[1]]) # trasformo in un file im e considero solo la prima banda  
+Window(bosnia2020.im)<-confine.bosnia.owin # visualizzo solo le cose dentro a confine italia
+plot(bosnia2020.im,main="Fcover 2020",col=cl)
+plot(confine.bosnia,add=T)
+################
+proj4string(confini.ita) <- CRS(as.character(NA)) # elimino i NA
+confini.ita.owin <-as.owin(confini.ita) # trasformo file owin
+class(ita1999) # controllo quante bande ha
+differenza.ita.im<- as.im(differenza.ita[[1]]) # trasformo in un file im e considero solo la prima banda  
+Window(differenza.ita.im)<-confini.ita.owin # visualizzo solo le cose dentro a confine italia
+plot(differenza.ita.im,main="reforestation 1999-2020",col=cl)
+plot(confini.ita,add=T)
+###################################
+proj4string(confine.bosnia) <- CRS(as.character(NA)) # elimino i NA
+confine.bosnia.owin <-as.owin(confine.bosnia) # trasformo file owin
+class(differenza.bosnia) # controllo quante bande ha
+differenza.bosnia.im<- as.im(differenza.bosnia[[1]]) # trasformo in un file im e considero solo la prima banda  
+Window(differenza.bosnia.im)<-confine.bosnia.owin # visualizzo solo le cose dentro a confine italia
+plot(differenza.bosnia.im,main="reforestation 1999-2020",col=cl)
+plot(confine.bosnia,add=T)
+#########################################
+#ritrasformo in raster queste immagini per poter applicarci le statistiche grafiche e non
+ita1999.im.raster=raster(ita1999.im)
+ita2020.im.raster=raster(ita2020.im)
+differenza.ita.im.raster=raster(differenza.ita.im)
+bosnia1999.im.raster=raster(bosnia.1999.im)
+bosnia2020.im.raster=raster(bosnia2020.im)
+differenza.bosnia.im.raster=raster(differenza.bosnia.im)
+##################################################
+#statistice
+
+#statistiche con grafici
+
+par(mfrow=c(1,2))
+boxplot(differenza.ita.im.raster,outline=F,ylim=c(-0.2,0.4),col="green",main="reforestation in Italy") 
+boxplot(differenza.bosnia.im.raster,outline=F,ylim=c(-0.2,0.4),col="red",main="reforestation in Bosnia")
+
+par(mfrow=c(1,2))
+hist(differenza.ita.im.raster,main="reforestation in Italy",ylim=c(0,140000),col="green")
+hist(differenza.bosnia.im.raster,main="reforestation in Bosnia",ylim=c(0,30000),col="red")
+
+
+
+
+par(mfrow=c(1,2))
+hist(ita1999.im.raster,ylim=c(0,120000),main="Italia 1999",col="green")
+hist(ita2020.im.raster,ylim=c(0,120000),main="Italia 2020",col="green")
+
+par(mfrow=c(1,2))
+boxplot(ita1999.im.raster,col="green",outline=F,main="Fcover Italy 1999") 
+boxplot(ita2020.im.raster,col="green",outline=F,main="Fcover Italy 2020")
+
+
+par(mfrow=c(1,2))
+hist(bosnia1999.im.raster,ylim=c(0,50000),main="Fcover Bosnia 1999",col="red")
+hist(bosnia2020.im.raster,ylim=c(0,50000),main="Fcover Bosnia 2020",col="red")
+
+par(mfrow=c(1,2))
+boxplot(bosnia1999.im.raster,col="red",outline=F,main="Fcover Bosnia 1999") 
+boxplot(bosnia2020.im.raster,col="red",outline=F,main="Fcover Bosnia 2020")
+
+# statistiche con test
+
+# estraggo i valori dalla foto dell' italia,
+#verifico se il mare ha valore NA.
+#in tal caso li elimino
+#elimino quei valori
+#uso il t.test per verificare se c'è una differenza statistica tra italia 1999 e 2020.
+
+# wich(vettore==valora) mi dice la posizione del valore che desidero in quel vettore 
+#is.na(vettore) # per ogni valore mi dice se è na o no (true e falso)
+#-wich trova e elimina
+#a<-c(NA,3,4,NA) # creo un vettore con (NA,3,4,NA)
+#b<-a[-which(is.na(a))] # vettor b è a meno tutti gli NA
+
+#italia nel 1999.
+freq(ita1999.im.raster) # mi dice nella foto quanti pixel hanno determinati valori io vedo molti valori non validi, il mare non ha valore 0 ma NA.
+estrazione1999<-as.vector(ita1999.im.raster) # fa un mega vettore con i pixel
+estrazione1999
+senzamare.ita1999<-estrazione1999[-which(is.na(estrazione1999))] #dal vettore estrazione2020 tolgo tutti na.
+senzamare.ita1999 # estrazione dei valori togliendo Na
+boxplot(senzamare.ita1999,outline=F)
+
+#italia nel 2020.
+freq(ita2020.im.raster) # mi dice nella foto quanti pixel hanno determinati valori io vedo molti valori non validi, il mare non ha valore 0 ma NA.
+estrazione.ita2020<-as.vector(ita2020.im.raster) # fa un mega vettore con i pixel
+senzamare.ita2020<-estrazione.ita2020[-which(is.na(estrazione.ita2020))] #dal vettore estrazione2020 tolgo tutti na.
+boxplot(senzamare.ita2020 ,outline=F)
+
+#verifico le varianze
+var.test(senzamare.ita1999,senzamare.ita2020) # le varianze risultano differenti perchè p.value è piccolissimo
+#test t
+t.test(senzamare.ita1999,senzamare.ita2020,var.equal = F)# ho un p.value molto piccolo, dice che c'è una differeza significativa
+
+#bosnia 99
+freq(bosnia1999.im.raster) # mi dice nella foto quanti pixel hanno determinati valori io vedo molti valori non validi, il mare non ha valore 0 ma NA.
+estrazione.bosnia1999 <-as.vector(bosnia1999.im.raster) # fa un mega vettore con i pixel
+senzamare.bosnia1999<-estrazione.bosnia1999[-which(is.na(estrazione.bosnia1999))] #dal vettore estrazione2020 tolgo tutti na.
+senzamare.bosnia1999 # estrazione dei valori togliendo Na
+boxplot(senzamare.bosnia1999,outline=F)
+
+#bosnia 2020
+freq(bosnia2020.im.raster) # mi dice nella foto quanti pixel hanno determinati valori io vedo molti valori non validi, il mare non ha valore 0 ma NA.
+estrazione.bosnia2020<-as.vector(bosnia2020.im.raster) # fa un mega vettore con i pixel
+estrazione.bosnia2020
+senzamare.bosnia2020<-estrazione.bosnia2020[-which(is.na(estrazione.bosnia2020))] #dal vettore estrazione2020 tolgo tutti na.
+boxplot(senzamare.bosnia2020,outline=F)
+
+#verifico le varianze
+var.test(senzamare.bosnia1999,senzamare.bosnia2020) # le varianze risultano differenti perchè p.value è piccolissimo
+#test t
+t.test(senzamare.bosnia1999,senzamare.bosnia2020, var.equal = F)# significativo
+
+#riforestazione dell' Italia
+freq(differenza.ita.im.raster) # mi dice nella foto quanti pixel hanno determinati valori io vedo molti valori non validi, il mare non ha valore 0 ma NA.
+estrazione.differenza.ita<-as.vector(differenza.ita.im.raster) # fa un mega vettore con i pixel
+senzamare.differenza.ita<-estrazione.differenza.ita[-which(is.na(estrazione.differenza.ita))] #dal vettore estrazione2020 tolgo tutti na.
+boxplot(senzamare.differenza.ita,outline=F)
+#riforestazione della Bosnia
+freq(differenza.bosnia.im.raster) # mi dice nella foto quanti pixel hanno determinati valori io vedo molti valori non validi, il mare non ha valore 0 ma NA.
+estrazione.differenza.bosnia<-as.vector(differenza.bosnia.im.raster) # fa un mega vettore con i pixel
+senzamare.differenza.bosnia<-estrazione.differenza.bosnia[-which(is.na(estrazione.differenza.bosnia))] #dal vettore estrazione2020 tolgo tutti na.
+boxplot(senzamare.differenza.bosnia,outline=F, ylim=c(-0.2,0.4))
+
+#verifico le varianze
+var.test(senzamare.differenza.bosnia,senzamare.differenza.ita) # le varianze risultano differenti perchè p.value è piccolissimo
+#test t
+t.test(senzamare.differenza.ita,senzamare.differenza.bosnia, var.equal = F)# significativo
+#vengono significativamente differente sia il confronto tra coperturavegetale 1999-2020(sia in Italia che in bosnia)
+#viene significativo anche la differenza tra la riforestazione avvenuta in Italie e nella Bosnia.
+#
+
+
+
+
+
+
+
